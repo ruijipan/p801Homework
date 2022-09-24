@@ -1,5 +1,5 @@
 ---
-title: "p8105_hw1_YOURUNI.rmd"
+title: "p8105_hw1_rp3127.rmd"
 output: html_document
 ---
 
@@ -7,30 +7,73 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Problem 1
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## Part 1
 
 ```{r Problem 1 basic information}
 data("penguins", package = "palmerpenguins")
+#read data penguins
 head(penguins)
+#Find the head of the dataset
 nrow(penguins)
+#find the row number of the data set
 ncol(penguins)
+#find the column number of the data set
 mean(penguins$flipper_length_mm,na.rm = TRUE)
+#find the mean of the flipper length
 table(penguins$species)
+#show the number of each species of penguins
 ```
+The data is about three species penguins, it includes 8 parameter for each penguins. And there are 344 penguins in total.  From the dataset we know that the mean flipper length is $200.9152$mm.
 
-
+## Part 2
 
 ```{r Problem 2 plot, `echo = FALSE`}
+library('ggplot2')
 ggplot(penguins,aes(bill_length_mm,flipper_length_mm,color = species))+ geom_point()+ labs(
 x ='Bill Length(mm)',
 y = 'Fipper Length(mm)',
 title = 'Relation between bill length and fipper length for different penguins')
 #Plot the graph of the bill length and fipper length and color in species.
 ggsave('bill-fipper plot.png', path = 'C:/Users/A/Desktop/R')
+#save the ggplot result
+```
+# Probelm 2
+
+## Part 1
+
+```{r Probelm 2,`echo = FALSE` }
+RandomNormal <- rnorm(10,0,1)
+#generate 10 value from standard normal distribution
+Logical <- randomNormal > 0
+#generate the logical vector
+CharVec <- c('a','f','e','k','j','1','a','c','5','n')
+#generate a character vector
+data4 <- c('low','middle','high','middle','middle','middle','low','high','low','low'); FacVec <- factor(data4)
+#generate a factor vector with three level
+data <- data.frame(RandomNormal,Logical,CharVec,FacVec)
+#generate a data frame by the above data
+mean(data$RandomNormal)
+#find mean of the first vector
+mean(data$Logical)
+#find mean of the second vector
+mean(data$CharVec)
+#find mean of the third vector
+mean(data$FacVec)
+#find mean of the fourth vector
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+We cannot calculates the mean of logical values, character values and factor values. Only the random sample has a mean.
+
+## Part 2
+
+```{r Problem 2,`echo = FALSE`}
+as.numeric(data$Logical)
+#change the logical value to number
+as.numeric(data$CharVec)
+#change the character to number
+as.numeric(data$FacVec)
+#change the level to number
+```
+Logical values change to $0$ for false and $1$ for true. Character changes to NA unless the characters itself is a number. And level changes to ordered positive integers for each level.
