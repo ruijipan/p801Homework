@@ -1,0 +1,134 @@
+---
+title: "Homework 2"
+author: "rp3127"
+date: "2022/10/5"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(haven)
+options(tibble.print_min = 5)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+```{r cars}
+library(readxl)
+
+Trash_MrTrashWheel = 
+  read_excel("./data/Trash Wheel Collection Data.xlsx",sheet = 'Mr. Trash Wheel') %>%
+  janitor::clean_names(dat = .) %>%
+  select(.data = ., dumpster:sports_balls) %>%
+  mutate(
+    .data = .,
+    sports_balls = round(sports_balls),
+    sports_balls = as.integer(sports_balls)
+  ) %>%
+  drop_na(data = ., dumpster)
+
+Trash_Professor = 
+  read_excel("./data/Trash Wheel Collection Data.xlsx",sheet = 'Professor Trash Wheel') %>%
+  janitor::clean_names(dat = .) %>%
+  select(.data = ., dumpster:homes_powered) %>%
+  mutate(
+    .data = .,
+    sports_balls = 0,
+    sports_balls = as.integer(sports_balls),
+    year = as.character(year)
+  ) %>%
+  select(.data = ., dumpster:chip_bags,sports_balls,homes_powered) %>%
+  drop_na(data = ., dumpster)
+
+Trash_MrTrashWheel = 
+  mutate(
+   Trash_MrTrashWheel,
+   kind_trash_wheel = 'MrTrashWheel'
+  )
+
+Trash_Professor = 
+  mutate(
+    Trash_Professor,
+    kind_trash_wheel = 'ProfessorTrashWheel'
+  )
+
+trash_wheel = 
+  bind_rows(Trash_MrTrashWheel,Trash_Professor)
+
+trash_wheel
+```
+
+Professor.weight <- sum(Trash_Professor)
+
+```{r pressure, echo=FALSE}
+nrow(Trash_MrTrashWheel)
+nrow(Trash_Professor)
+sum(Trash_Professor$weight_tons)
+mean(Trash_Professor$weight_tons)
+sum(Trash_MrTrashWheel$weight_tons)
+mean(Trash_MrTrashWheel$weight_tons)
+```
+The dateset includes the time, number of dumster, number of different kind of trash, total weight for each trash wheel. There are 547 and 94 observation in the dataset for Mr trash wheel and professor trash wheel respectively. Professor Trash wheel collect 190.12 tons trash in total, and the mean value is 2.0226 tons. The Mr trash wheel collect 1748.36 tons trash in total, and the mean value is 3.1963 tons.
+
+
+# Problem 3
+
+```{r Month}
+library(lubridate) 
+Month = 
+  read.csv('./data/fivethirtyeight_datasets/pols-month.csv') %>%
+  janitor::clean_names(dat = .)%>%
+  separate(data = . , col = 'mon', into = c('year','month','day'),sep='-')%>%
+  mutate(
+    .data = .,
+    year = as.integer(year),
+    month = as.integer(month),
+    month = month(month , label = T),
+    president = data.frame(prez_dem,prez_gop)
+  )%>%
+  select(.data = .,-prez_dem,-day,-prez_gop)
+Month
+```
+
+
+```{r Snp}
+Snp =
+  read.csv('./data/fivethirtyeight_datasets/snp.csv',header=TRUE)%>%
+  janitor::clean_names(dat = .)%>%
+  separate(data = . , col = 'date', into = c('year','month','day'),sep='/')%>%
+  mutate(
+    .data = .,
+    year = as.integer(2000+as.integer(year)),
+    month = as.integer(month),
+    month = month(month , label = T),
+  )%>%
+  select(.data = . , -day)%>%
+  arrange(year,month)
+Snp
+```
+
+```{r Unemployment}
+Unemployment =
+  read.csv('./data/fivethirtyeight_datasets/unemployment.csv',header=TRUE)%>%
+  pivot_longer(
+  data = . ,
+  Jan:Dec,
+  names_to = 'month',
+  values_to = 'rate'
+  )%>%
+  janitor::clean_names(dat = .)
+
+  
+Unemployment
+```
+
+```{r merge}
+MergeData <- inner_join(inner_join(Month,Snp),Unemployment)
+```
+```{r analysis}
+MergeData
+plot(MergeData$year,MergeData$rate)
+```
+The unemployument rate is increasing from 2002 to 2012 in general. 
+
